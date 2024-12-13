@@ -8,8 +8,8 @@
 #' options(ask=oldask)
 #' @export
 abrigapp2 = function() {
- data("gloc_hg19", package="GGIpack")
- utils::data("geneNames", package = "GGIpack")
+ data("gloc_hg19", package="GGIpack2")
+ utils::data("geneNames", package = "GGIpack2")
 
 # set up data resources
  con = DBI::dbConnect(duckdb::duckdb())
@@ -75,23 +75,8 @@ names(pfiles) = c("BAL", "BroncEpiBrush", "CD4Stim", "CD4Unstim",
       output[[x]] = 
        DT::renderDataTable({
          if (input$focus == "chr")
-           resl[[x]]@tbl |> dplyr::filter(seqnames == as.character(local(input$chr))) |>
-                  dplyr::arrange(score) |>
-                  head(input$nrecs) |> as.data.frame() 
-         else if (input$focus == "gene") 
-           resl[[x]]@tbl |> dplyr::filter(molecular_trait_id == as.character(local(input$gene))) |>
-                  as.data.frame() 
-         else if (input$focus == "rsid") 
-           dat = resl[[x]]@tbl |> dplyr::filter(rsid == as.character(local(input$snp))) |>
-                  as.data.frame() 
-       })
-      }
-      )
-    output$theplot = renderPlot({ 
-      par(mfrow=c(length(input$respicks), 1))
-      for (x in input$respicks) {
-         if (input$focus == "chr")
            dat = resl[[x]]@tbl |> dplyr::filter(seqnames == as.character(local(input$chr))) |>
+                  dplyr::arrange(score) |>
                   head(input$nrecs) |> as.data.frame() 
          else if (input$focus == "gene") 
            dat = resl[[x]]@tbl |> dplyr::filter(molecular_trait_id == as.character(local(input$gene))) |>
@@ -99,14 +84,39 @@ names(pfiles) = c("BAL", "BroncEpiBrush", "CD4Stim", "CD4Unstim",
          else if (input$focus == "rsid") 
            dat = resl[[x]]@tbl |> dplyr::filter(rsid == as.character(local(input$snp))) |>
                   as.data.frame() 
-         plot(dat$start, -log10(dat$score), main=x)
+       })
+      }
+      )
+    output$theplot = plotly::renderPlotly({ 
+#      par(mfrow=c(length(input$respicks), 1))
+      thedat = NULL
+      for (x in input$respicks) {
+         if (input$focus == "chr")
+           dat = resl[[x]]@tbl |> dplyr::filter(seqnames == as.character(local(input$chr))) |>
+                  dplyr::arrange(score) |>
+                  head(input$nrecs) |> as.data.frame() 
+         else if (input$focus == "gene") 
+           dat = resl[[x]]@tbl |> dplyr::filter(molecular_trait_id == as.character(local(input$gene))) |>
+                  as.data.frame() 
+         else if (input$focus == "rsid") 
+           dat = resl[[x]]@tbl |> dplyr::filter(rsid == as.character(local(input$snp))) |>
+                  as.data.frame() 
+         dat$tissue = x
+         if (is.null(thedat)) thedat = dat
+         else thedat = rbind(thedat, dat)
+         print(tail(thedat))
          }
-      }, height=800L)
+         plotly::ggplotly(ggplot2::ggplot(data=thedat, 
+                  ggplot2::aes(x=start, y=-log10(score))) +
+              ggplot2::geom_point() + ggplot2::facet_grid(tissue~.))
+         #plot(dat$start, -log10(dat$score), main=x)
+      })
+#      }, height=800L)
   # communicate selected components to UI
     output$all = renderUI({
      o = lapply(c(input$respicks, "viz"), function(x) {
               if (x != "viz") tabPanel(x, DT::dataTableOutput(x))
-              else tabPanel("viz", shiny::plotOutput("theplot"))
+              else tabPanel("viz", plotly::plotlyOutput("theplot"))
               })
      do.call(tabsetPanel, o)
     })
