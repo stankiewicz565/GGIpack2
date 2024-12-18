@@ -77,13 +77,13 @@ names(pfiles) = c("BAL", "BroncEpiBrush", "CD4Stim", "CD4Unstim",
          if (input$focus == "chr")
            dat = resl[[x]]@tbl |> dplyr::filter(seqnames == as.character(local(input$chr))) |>
                   dplyr::arrange(score) |>
-                  head(input$nrecs) |> as.data.frame() 
+                  head(input$nrecs) |> as.data.frame() |> dorounds()
          else if (input$focus == "gene") 
            dat = resl[[x]]@tbl |> dplyr::filter(molecular_trait_id == as.character(local(input$gene))) |>
-                  as.data.frame() 
+                  as.data.frame() |> dorounds()
          else if (input$focus == "rsid") 
            dat = resl[[x]]@tbl |> dplyr::filter(rsid == as.character(local(input$snp))) |>
-                  as.data.frame() 
+                  as.data.frame() |> dorounds()
        })
       }
       )
