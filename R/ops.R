@@ -121,7 +121,7 @@ dorounds = function(mydf) {
   #headerList  = lapply(mydf, class)
   #headers = colnames(mydf)
   for(i in 1:dim(mydf)[2]){
-    if(is.numeric(mydf[[i]])){
+    #if(is.numeric(mydf[[i]])){
       # I want to chane this and add the  change to scientific notation for p-values 
       #or perhaps change it all to scientific notation?
       mydf[[i]] = round(mydf[[i]], 3)
