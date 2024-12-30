@@ -29,7 +29,9 @@ names(pfiles) = c("BAL", "BroncEpiBrush", "CD4Stim", "CD4Unstim",
  CD4Unstim = ABRIGresource(con, "CD4Unstim", pfiles = pfiles)
  AlvMacphage = ABRIGresource(con, "AlvMacphage", pfiles = pfiles)
  PaxRNA = ABRIGresource(con, "PaxRNA", pfiles = pfiles)
-
+#tavbles 
+ 
+ 
  resl = list(BAL=BALres, BroncEpiBr=BEBres,
      CD4Stim=CD4Stim, CD4Unstim=CD4Unstim, AlvMacphage=AlvMacphage, PaxRNA=PaxRNA)
 
@@ -114,7 +116,21 @@ names(pfiles) = c("BAL", "BroncEpiBrush", "CD4Stim", "CD4Unstim",
               if (x != "viz") tabPanel(x, DT::dataTableOutput(x))
               else tabPanel("viz", plotly::plotlyOutput("theplot"))
               })
-     o = c(o, list(tabPanel("about", helpText(sprintf("(GGIpack2 %s) This is an app demonstrating organization of eQTL data with parquet and duckdb", packageVersion("GGIpack2"))))))
+    o = c(o, list(tabPanel("about", helpText(sprintf("(GGIpack2 %s) This is an app demonstrating organization 
+    of eQTL data with parquet and duckdb. from the abrig  data release on 05/15/2023. This new data release merges the 
+                 population data for each of the cell types together thus there is no more choice 
+                 for population since there is no way to separate the data anymore. The original
+                 data can be found in the following  path on the Nantucket server.",
+                                                      packageVersion("GGIpack2")
+                                                     ),# sprntf
+                                    ),#helptext
+                           br(),
+                           DT::DTOutput(BALresl@tbl |> head() |> as.data.frame()),
+                           p("made it here")
+                           
+                            )#tabpanel
+                   )#list
+           )#o
      names(o) = NULL
 
      do.call(tabsetPanel, o)
