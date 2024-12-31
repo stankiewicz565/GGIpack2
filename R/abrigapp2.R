@@ -19,6 +19,7 @@ c("/udd/remcr/abrig/ca_ba.parquet", "/udd/remcr/abrig/ca_brep.parquet",
 "/udd/remcr/abrig/cc_s.parquet", "/udd/remcr/abrig/cc_unstim.parquet",
 "/udd/remcr/abrig/ch_am.parquet", "/udd/remcr/abrig/comb.parquet")
 
+
 names(pfiles) = c("BAL", "BroncEpiBrush", "CD4Stim", "CD4Unstim",
                   "AlvMacphage", "PaxRNA")
 
@@ -29,7 +30,15 @@ names(pfiles) = c("BAL", "BroncEpiBrush", "CD4Stim", "CD4Unstim",
  CD4Unstim = ABRIGresource(con, "CD4Unstim", pfiles = pfiles)
  AlvMacphage = ABRIGresource(con, "AlvMacphage", pfiles = pfiles)
  PaxRNA = ABRIGresource(con, "PaxRNA", pfiles = pfiles)
-#tavbles 
+#tables 
+ 
+  BALhead = BALres@tbl |> head() |> as.data.frame()
+ BEBhead = BEBres@tbl |> head() |> as.data.frame()
+ CD4Stimhead = CD4Stim@tbl |> head() |> as.data.frame()
+ CD4Unstimhead = CD4Unstim@tbl |> head() |> as.data.frame()
+ AlvMacphagehead = AlvMacphage@tbl |> head() |> as.data.frame()
+ PaxRNAhead = PaxRNA@tbl |> head() |> as.data.frame()
+
  
  
  resl = list(BAL=BALres, BroncEpiBr=BEBres,
@@ -110,6 +119,26 @@ names(pfiles) = c("BAL", "BroncEpiBrush", "CD4Stim", "CD4Unstim",
                   ggplot2::aes(x=start, y=-log10(score))) +
               ggplot2::geom_point() + ggplot2::facet_grid(tissue~.))
       })
+    
+    output$BALTable<- DT::renderDT({
+      data.frame(BALhead)
+    })#BAlTable
+    output$BEBTable <- DT::renderDT({
+      data.frame(BEBhead)
+    })#BAlTable
+    output$CD4StimTable<- DT::renderDT({
+      data.frame(CD4Stimhead)
+    })#BAlTable
+    output$CD4UnstimTable<- DT::renderDT({
+      data.frame(CD4Unstimhead)
+    })#BAlTable
+    output$AlvMacphageTable<- DT::renderDT({
+      data.frame(AlvMacphagehead)
+    })#BAlTable
+    output$PaxRNATable<- DT::renderDT({
+      data.frame(PaxRNAhead)
+    })#BAlTable
+    
   # communicate selected components to UI
     output$all = renderUI({
      o = lapply(c(input$respicks, "viz"), function(x) {
@@ -125,9 +154,23 @@ names(pfiles) = c("BAL", "BroncEpiBrush", "CD4Stim", "CD4Unstim",
                                                      ),# sprntf
                                     ),#helptext
                            br(),
-                           DT::DTOutput(BALresl@tbl |> head() |> as.data.frame()),
-                           p("made it here")
-                           
+                           p("BAL Table"),
+                           DT::DTOutput('BALTable'),
+                           br(),
+                           p("BEB Table"),
+                           DT::DTOutput('BEBTable'),
+                           br(),
+                           p("CD4Stim Table"),
+                           DT::DTOutput('CD4StimTable'),
+                           br(),
+                           p("CD4UnstimTable"),
+                           DT::DTOutput('CD4UnstimTable'),
+                           br(),
+                           p("AlvMacphage Table"),
+                           DT::DTOutput('AlvMacphageTable'),
+                           br(),
+                           p("PaxRNA Table"),
+                           DT::DTOutput('PaxRNATable')
                             )#tabpanel
                    )#list
            )#o
