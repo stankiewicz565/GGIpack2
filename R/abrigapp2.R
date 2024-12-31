@@ -32,12 +32,12 @@ names(pfiles) = c("BAL", "BroncEpiBrush", "CD4Stim", "CD4Unstim",
  PaxRNA = ABRIGresource(con, "PaxRNA", pfiles = pfiles)
 #tables 
  
-  BALhead = BALres@tbl |> head() |> as.data.frame()
- BEBhead = BEBres@tbl |> head() |> as.data.frame()
- CD4Stimhead = CD4Stim@tbl |> head() |> as.data.frame()
- CD4Unstimhead = CD4Unstim@tbl |> head() |> as.data.frame()
- AlvMacphagehead = AlvMacphage@tbl |> head() |> as.data.frame()
- PaxRNAhead = PaxRNA@tbl |> head() |> as.data.frame()
+  BALhead = BALres@tbl |> head() |> as.data.frame() |> dorounds()
+ BEBhead = BEBres@tbl |> head() |> as.data.frame()|> dorounds()
+ CD4Stimhead = CD4Stim@tbl |> head() |> as.data.frame()|> dorounds()
+ CD4Unstimhead = CD4Unstim@tbl |> head() |> as.data.frame()|> dorounds()
+ AlvMacphagehead = AlvMacphage@tbl |> head() |> as.data.frame()|> dorounds()
+ PaxRNAhead = PaxRNA@tbl |> head() |> as.data.frame()|> dorounds()
 
  
  
